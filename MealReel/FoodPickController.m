@@ -7,12 +7,19 @@
 //
 
 #import "FoodPickController.h"
+#import "MediaSugViewController.h"
 
 @interface FoodPickController ()
 @property (weak, nonatomic) IBOutlet UIPickerView *FoodPicker;
 
-@property (strong, nonatomic) NSArray *cuisines;
+//Buttons
+@property (weak, nonatomic) IBOutlet UIButton *cancelButton;
+@property (weak, nonatomic) IBOutlet UIButton *selectButton;
+
+@property (strong, nonatomic) NSArray *categories;
 @property (strong, nonatomic) NSArray *dishes;
+
+@property (strong, nonatomic) PairingModel *model;
 
 @end
 
@@ -20,19 +27,34 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.model = [PairingModel sharedModel];
     
     self.FoodPicker.dataSource = self;
     self.FoodPicker.delegate = self;
     
-    self.cuisines =@[@"Indian", @"Italian", @"Japanese", @"American", @"Breakfast", @"Mexican"];
-    self.dishes =@[@"Chicken Fingers", @"Mac N' Cheese", @"Hot Dog", @"Apple Pie", @"PB&J", @"Steak", @"Burger"];
+    self.categories = [self.model getCategories];
+    NSString *selectedCategory = [self.categories objectAtIndex:0];
+    self.dishes = [self.model getFoodsForCategory: selectedCategory];
+    
+    //self.cuisines =@[@"Indian", @"Italian", @"Japanese", @"American", @"Breakfast", @"Mexican"];
+    //self.dishes =@[@"Chicken Fingers", @"Mac N' Cheese", @"Hot Dog", @"Apple Pie", @"PB&J", @"Steak", @"Burger"];
     
     //do things
-    
-    
-    
-    
 }
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    MediaSugViewController *vc = [segue destinationViewController];
+        
+    // Pass any objects to the view controller here, like...
+    vc.chosenFood = [self.dishes objectAtIndex:[self.FoodPicker selectedRowInComponent:1]];
+}
+
+
+- (IBAction)Cancel:(id)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -64,7 +86,7 @@
 numberOfRowsInComponent:(NSInteger)component
 {
     if (component == 0) {
-        return [self.cuisines count];
+        return [self.categories count];
     } else {
         return [self.dishes count];
     }
@@ -79,16 +101,28 @@ numberOfRowsInComponent:(NSInteger)component
           forComponent: (NSInteger) component
 {
     if (component == 0){
-        return [self.cuisines objectAtIndex:row];
+        return [[self.categories objectAtIndex:row]capitalizedString];
     }
     else{
-        return [self.dishes objectAtIndex:row];
+        return [[self.dishes objectAtIndex:row]capitalizedString];
 
     }
     
 }
 
-
+- (void)pickerView:(UIPickerView *)pickerView
+      didSelectRow:(NSInteger)row
+       inComponent:(NSInteger)component
+{
+    if (component == 0) {
+        NSString *selectedCategory = self.categories[row];
+        self.dishes = [self.model getFoodsForCategory: selectedCategory];
+        [self.FoodPicker reloadComponent:1];
+        [self.FoodPicker selectRow:0
+                       inComponent:1
+                          animated:YES];
+         }
+}
 
 
 @end

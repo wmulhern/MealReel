@@ -1,5 +1,5 @@
 //
-//  AssociateViewController.h
+//  MediaSugViewController.h
 //  MealReel
 //
 //  Created by Whitney on 4/21/15.
@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "PairingModel.h"
 
-@interface AssociateViewController : UIViewController
-
+@interface MediaSugViewController : UIViewController
+@property (strong, nonatomic) NSString *chosenFood;
 @end

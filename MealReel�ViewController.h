@@ -1,5 +1,5 @@
 //
-//  AppDelegate.h
+//  ViewController.h
 //  MealReel
 //
 //  Created by Whitney on 4/21/15.
@@ -9,11 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "PairingModel.h"
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
+@interface ViewController : UIViewController
 
-@property (strong, nonatomic) UIWindow *window;
+//@property (strong, nonatomic) PairingModel *model;
 
-@property (strong, nonatomic) PairingModel *model;
 
 @end
 

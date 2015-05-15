@@ -16,7 +16,7 @@
 
 + (id)sharedModel;
 
--(NSArray *)getTop5MatchesForFood:(NSString *)food;
+-(NSMutableArray *)getTop5MatchesForFood:(NSString *)food;
 
 -(int)getFoodToAdjStrength:(NSString *)food :(NSString *)adj;
 -(void)insertFoodToAdj:(NSString *)food :(NSString *)adj :(int)strength;
@@ -35,4 +35,5 @@
 -(NSString *)getRandomFood;
 
 -(NSString *)getCommonAdj:(NSString *)food :(NSString *)media;
+-(void) insertNewFood:(NSString *)food :(NSString *)category;
 @end

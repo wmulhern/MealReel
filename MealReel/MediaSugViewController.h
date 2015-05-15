@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PairingModel.h"
 
 @interface MediaSugViewController : UIViewController
-
+@property (strong, nonatomic) NSString *chosenFood;
 @end

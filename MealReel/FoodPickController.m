@@ -32,9 +32,7 @@
     self.FoodPicker.dataSource = self;
     self.FoodPicker.delegate = self;
     
-    self.categories = [self.model getCategories];
-    NSString *selectedCategory = [self.categories objectAtIndex:0];
-    self.dishes = [self.model getFoodsForCategory: selectedCategory];
+    
     
     //self.cuisines =@[@"Indian", @"Italian", @"Japanese", @"American", @"Breakfast", @"Mexican"];
     //self.dishes =@[@"Chicken Fingers", @"Mac N' Cheese", @"Hot Dog", @"Apple Pie", @"PB&J", @"Steak", @"Burger"];
@@ -44,15 +42,29 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    MediaSugViewController *vc = [segue destinationViewController];
+    if ([segue.identifier  isEqual: @"selectFoodSegue"]) {
+        MediaSugViewController *vc = [segue destinationViewController];
         
-    // Pass any objects to the view controller here, like...
-    vc.chosenFood = [self.dishes objectAtIndex:[self.FoodPicker selectedRowInComponent:1]];
+        // Pass any objects to the view controller here, like...
+        vc.chosenFood = [self.dishes objectAtIndex:[self.FoodPicker selectedRowInComponent:1]];
+    }
+    
 }
 
 
 - (IBAction)Cancel:(id)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    self.categories = [self.model getCategories];
+    NSString *selectedCategory = [self.categories objectAtIndex:0];
+    self.dishes = [self.model getFoodsForCategory: selectedCategory];
+    
+    [self.FoodPicker reloadComponent:0];
+    [self.FoodPicker reloadComponent:1];
 }
 
 

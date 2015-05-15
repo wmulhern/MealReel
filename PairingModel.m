@@ -35,7 +35,7 @@
     return model;
 }
 
--(NSArray *)getTop5MatchesForFood:(NSString *)food{
+-(NSMutableArray *)getTop5MatchesForFood:(NSString *)food{
     NSMutableArray *matches;
     char *query = "SELECT adj FROM food_to_adj"
         " WHERE food=?"
@@ -341,6 +341,35 @@
     }
     
     return adj;
+}
+
+-(void) insertNewFood:(NSString *)food :(NSString *)category{
+    char *query = "SELECT * FROM categories WHERE food = ?;";
+    sqlite3_stmt *stmt;
+    sqlite3_stmt *stmt2;
+    
+    if(sqlite3_prepare_v2(self.db, query, -1, &stmt, nil) == SQLITE_OK){
+        sqlite3_bind_text(stmt, 1, [food UTF8String], -1, NULL);
+        if(sqlite3_step(stmt) == SQLITE_ROW){
+            // Return because the food already exists in the db;
+            sqlite3_finalize(stmt);
+            return;
+        }else{
+            sqlite3_finalize(stmt);
+            query = "INSERT INTO categories (food, category)"
+            " VALUES(?, ?);";
+            if(sqlite3_prepare_v2(self.db, query, -1, &stmt2, nil) == SQLITE_OK){
+                sqlite3_bind_text(stmt2, 1, [food UTF8String], -1, NULL);
+                sqlite3_bind_text(stmt2, 2, [category UTF8String], -1, NULL);
+                
+                sqlite3_step(stmt2);
+                sqlite3_finalize(stmt2);
+                return;
+            }
+        }
+    }else {
+        NSLog(@"Error: %s", sqlite3_errmsg(self.db));
+    }
 }
 
 @end

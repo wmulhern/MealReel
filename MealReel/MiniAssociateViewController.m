@@ -6,32 +6,116 @@
 //  Copyright (c) 2015 New York University. All rights reserved.
 //
 
+#import "PairingModel.h"
 #import "MiniAssociateViewController.h"
 
 @interface MiniAssociateViewController ()
+
+
+@property (weak, nonatomic) IBOutlet UIButton *miniAdj1;
+@property (weak, nonatomic) IBOutlet UIButton *miniAdj2;
+@property (weak, nonatomic) IBOutlet UIButton *miniAdj3;
+@property (weak, nonatomic) IBOutlet UIButton *miniNoneAdj;
+@property (weak, nonatomic) IBOutlet UILabel *miniChoiceLabel;
+@property (weak, nonatomic) IBOutlet UILabel *miniChoiceString;
+
+@property (strong, nonatomic) PairingModel *model;
+
+//data
+@property (strong, nonatomic) NSArray *miniMovies;
+@property (strong, nonatomic) NSArray *miniAdjectives;
+
 
 @end
 
 @implementation MiniAssociateViewController
 
+int miniRandNum = 0;
+int numRounds;
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    self.model = [PairingModel sharedModel];
+    
+    [self generateMiniDisplay];
+    numRounds = 0;
+}
+-(void)generateMiniDisplay{
+    //select either food or movie at random
+    srandom((unsigned int)time(NULL));
+    miniRandNum = (int)random() % 2;
+    
+    //create movie image and adj choices
+    if (miniRandNum == 0){
+        [self generateMiniMovie];
+        self.miniChoiceString.text = @"This movie is...";
+    }
+    else{
+        [self generateMiniFood];
+        self.miniChoiceString.text = @"This food is...";
+    }
+    [self generateMiniChoices];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (void)generateMiniMovie{
+    //use movie image instead when those are included
+    self.miniChoiceLabel.text = [[self.model getRandomMedia]capitalizedString];
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (void)generateMiniFood{
+    //use movie image instead when those are included
+    self.miniChoiceLabel.text = [[self.model getRandomFood]capitalizedString];
 }
-*/
+
+- (void)generateMiniChoices {
+    
+    NSArray *choices = [self.model get4RandomAdjs];
+    
+    //display adjectives on buttons
+    [self.miniAdj1 setTitle: [[choices objectAtIndex:0]capitalizedString] forState:UIControlStateNormal];
+    [self.miniAdj2 setTitle: [[choices objectAtIndex:1] capitalizedString] forState:UIControlStateNormal];
+    [self.miniAdj3 setTitle: [[choices objectAtIndex:2]capitalizedString] forState:UIControlStateNormal];
+}
+
+- (IBAction)adjMiniChosen:(UIButton*)sender {
+    // Database Shenanigans
+    // increase strength bw chosen adj and displayed movie
+    // do nothing if choice is "None of These"
+    if ([sender.currentTitle  isEqual: @"None of These"]){
+        //do nothing
+    }
+    else{
+        int strength = 0;
+        if (miniRandNum == 0){
+            strength= [self.model getMediaToAdjStrength :[self.miniChoiceLabel.text lowercaseString] :[[sender currentTitle] lowercaseString]];
+            [self.model insertMediaToAdj:[self.miniChoiceLabel.text lowercaseString] :[[sender currentTitle] lowercaseString] :strength+2];
+        }
+        else{
+            strength = [self.model getFoodToAdjStrength:[self.miniChoiceLabel.text lowercaseString] :[[sender currentTitle] lowercaseString]];
+            [self.model insertFoodToAdj:[self.miniChoiceLabel.text lowercaseString] :[[sender currentTitle] lowercaseString] :strength+2];
+        }
+        NSLog(@"strengthen connection bw %@ and %@ to %d", self.miniChoiceLabel.text, [sender currentTitle], strength+2);
+    }
+    
+    
+    NSLog(@"You said the movie %@ is %@", self.miniChoiceLabel.text,[sender currentTitle]);
+    
+    [self checkRounds];
+    [self generateMiniDisplay];
+    
+}
+
+-(void)checkRounds{
+    if (numRounds == 25) {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
+    else{
+        numRounds++;
+    }
+}
+
+
+
 
 @end
+

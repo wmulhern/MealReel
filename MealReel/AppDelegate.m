@@ -7,6 +7,8 @@
 //
 
 #import "AppDelegate.h"
+#import "WelcomeViewController.h"
+#import "MatchViewController.h"
 
 @interface AppDelegate ()
 
@@ -14,9 +16,34 @@
 
 @implementation AppDelegate
 
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"HasLaunchedOnce"])
+    {
+        // open normally
+    }
+    else
+    {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"HasLaunchedOnce"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        // This is the first launch ever
+        UIViewController *controller =  self.window.rootViewController;
+        UIStoryboard * storyboard = controller.storyboard;
+        NSString * storyboardName = [storyboard valueForKey:@"name"];
+        storyboard = [UIStoryboard storyboardWithName:storyboardName bundle:nil];
+        UIViewController *initViewController = [storyboard instantiateViewControllerWithIdentifier:@"welcomeViewController"];
+        
+        self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+        self.window.rootViewController = initViewController;
+        [self.window makeKeyAndVisible];
+        
+        NSLog(@"set root view controller");
+    }
+    //BOOL isLoggedIn = ...;    // from your server response
+    
+    //NSString *storyboardId = isLoggedIn ? @"MainIdentifier" : @"LoginIdentifier";
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+
     return YES;
 }
 

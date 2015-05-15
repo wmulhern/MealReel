@@ -34,7 +34,9 @@ int randNum = 0;
     [super viewDidLoad];
     
     self.model = [PairingModel sharedModel];
-    
+
+
+
     [self generateDisplay];
 }
 -(void)generateDisplay{
@@ -91,11 +93,11 @@ int randNum = 0;
         int strength = 0;
         if (randNum == 0){
              strength= [self.model getMediaToAdjStrength :[self.choiceLabel.text lowercaseString] :[[sender currentTitle] lowercaseString]];
-            [self.model updateMediaToAdj:[self.choiceLabel.text lowercaseString] :[[sender currentTitle] lowercaseString] :strength+2];
+            [self.model insertMediaToAdj:[self.choiceLabel.text lowercaseString] :[[sender currentTitle] lowercaseString] :strength+2];
         }
         else{
             strength = [self.model getFoodToAdjStrength:[self.choiceLabel.text lowercaseString] :[[sender currentTitle] lowercaseString]];
-            [self.model updateFoodToAdj:[self.choiceLabel.text lowercaseString] :[[sender currentTitle] lowercaseString] :strength+2];
+            [self.model insertFoodToAdj:[self.choiceLabel.text lowercaseString] :[[sender currentTitle] lowercaseString] :strength+2];
         }
         NSLog(@"strengthen connection bw %@ and %@ to %d", self.choiceLabel.text, [sender currentTitle], strength+2);
     }

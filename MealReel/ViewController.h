@@ -7,8 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PairingModel.h"
 
 @interface ViewController : UIViewController
+
+//@property (strong, nonatomic) PairingModel *model;
 
 
 @end

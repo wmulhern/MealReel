@@ -20,7 +20,10 @@ class InfoViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
+
+    @IBAction func Back(sender: UIButton) {
+        self.dismissViewControllerAnimated(true, completion: {});
+    }
 
     /*
     // MARK: - Navigation

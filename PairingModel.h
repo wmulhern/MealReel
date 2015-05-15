@@ -36,4 +36,6 @@
 
 -(NSString *)getCommonAdj:(NSString *)food :(NSString *)media;
 -(void) insertNewFood:(NSString *)food :(NSString *)category;
+
+-(NSString *)getPosterUrlForMedia:(NSString *)media;
 @end

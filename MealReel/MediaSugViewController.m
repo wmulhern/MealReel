@@ -91,14 +91,22 @@ NSInteger refreshes;
 
 
 - (UILabel *)createMovieLabel :(NSString*)name {
-    UILabel *movieLabel = [[UILabel alloc] initWithFrame:CGRectMake([UIScreen mainScreen].bounds.size.width/2-100, [UIScreen mainScreen].bounds.size.height/2-150, 200, 300)];
+    NSString *poster_url_str = [self.model getPosterUrlForMedia:name];
+    NSURL *poster_url = [NSURL URLWithString:poster_url_str];
+    NSData *poster_data = [NSData dataWithContentsOfURL:poster_url];
+    UIImage *poster_img = [UIImage imageWithData:poster_data];
     
+    UILabel *movieLabel = [[UILabel alloc] initWithFrame:CGRectMake([UIScreen mainScreen].bounds.size.width/2-100, [UIScreen mainScreen].bounds.size.height/2-150, 200, 300)];
     movieLabel.text = [name capitalizedString];
-    movieLabel.textAlignment = NSTextAlignmentCenter;
     movieLabel.backgroundColor = [UIColor lightGrayColor];
-    movieLabel.textColor = [UIColor whiteColor];
+    movieLabel.textColor = [UIColor clearColor];
     movieLabel.font = [UIFont fontWithName:@"Apple Color Emoji" size:36];
     movieLabel.numberOfLines= 0;
+    
+    UIImageView *bg = [[UIImageView alloc] initWithImage:poster_img];
+    bg.frame = CGRectMake(0, 0, 200, 300);
+    [movieLabel addSubview:bg];
+    movieLabel.backgroundColor = [UIColor clearColor];
     
     // enable touch delivery
     movieLabel.userInteractionEnabled = YES;

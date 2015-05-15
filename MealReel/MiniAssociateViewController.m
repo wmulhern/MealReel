@@ -58,11 +58,31 @@ int numRounds;
 }
 
 - (void)generateMiniMovie{
-    //use movie image instead when those are included
-    self.miniChoiceLabel.text = [[self.model getRandomMedia]capitalizedString];
+    // Remove the previously added background poster subview if there is one
+    UIImageView *view = (UIImageView *)[self.miniChoiceLabel viewWithTag:42];
+    if(view){
+        [view removeFromSuperview];
+    }
+    
+    NSString *media = [[self.model getRandomMedia]capitalizedString];
+    self.miniChoiceLabel.text = media;
+    
+    NSString *poster_url_str = [self.model getPosterUrlForMedia:media];
+    NSURL *poster_url = [NSURL URLWithString:poster_url_str];
+    NSData *poster_data = [NSData dataWithContentsOfURL:poster_url];
+    UIImage *poster_img = [UIImage imageWithData:poster_data];
+    
+    UIImageView *bg = [[UIImageView alloc] initWithImage:poster_img];
+    bg.frame = CGRectMake(0, 0, 300, 400);
+    bg.tag = 42;
+    [self.miniChoiceLabel addSubview:bg];
 }
 
 - (void)generateMiniFood{
+    UIImageView *view = (UIImageView *)[self.miniChoiceLabel viewWithTag:42];
+    if(view){
+        [view removeFromSuperview];
+    }
     //use movie image instead when those are included
     self.miniChoiceLabel.text = [[self.model getRandomFood]capitalizedString];
 }

@@ -12,14 +12,17 @@
 
 -(instancetype)init{
     self = [super init];
+    NSLog(@"%@", [NSBundle mainBundle]);
     if(self){
+        // TODO: Generalize the paths
+        //self.dbFilename = @"/Users/tmk270/MealReel/MealReel/MealReel.db";
         self.dbFilename = @"/Users/Whitney/MealReel/MealReel/MealReel.db";
     }
-    
+
     sqlite3 *db;
     if(sqlite3_open([self.dbFilename UTF8String], &db) != SQLITE_OK){
-        sqlite3_close(db);
         NSLog(@"Error:%s", sqlite3_errmsg(self.db));
+        sqlite3_close(db);
     }else{
         self.db = db;
     }
@@ -235,7 +238,7 @@
     }else{
         NSLog(@"Error: %s", sqlite3_errmsg(self.db));
     }
-    
+
     return cats;
 }
 
@@ -244,7 +247,7 @@
     sqlite3_stmt *stmt;
     char *query = "SELECT food FROM categories WHERE category=?;";
     char *food;
-    
+
     if(sqlite3_prepare_v2(self.db, query, -1, &stmt, nil) == SQLITE_OK){
         sqlite3_bind_text(stmt, 1, [cat UTF8String], -1,  NULL);
         while(sqlite3_step(stmt) == SQLITE_ROW){
@@ -372,4 +375,23 @@
     }
 }
 
+-(NSString *)getPosterUrlForMedia:(NSString *)media{
+    NSString *poster_url;
+    NSString *api_url = @"http://api.themoviedb.org/3/search/movie?api_key=%@&query=%@";
+    media = [media stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLHostAllowedCharacterSet]];
+    NSString *url_with_data = [NSString stringWithFormat:api_url, @"a7644511f806aec9cbf72fb78f5ccaa4", media];
+    NSURLRequest *req = [NSURLRequest requestWithURL:[NSURL URLWithString:url_with_data]];
+    NSURLResponse *resp = nil;
+    NSError *err = nil;
+    NSData *data = [NSURLConnection sendSynchronousRequest:req
+                                         returningResponse:&resp error:&err];
+    id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:&err];
+    if([json isKindOfClass:[NSDictionary class]]){
+        NSDictionary *dict = json;
+        NSArray *results = [dict objectForKey:@"results"];
+        poster_url = [NSString stringWithFormat:@"https://image.tmdb.org/t/p/w396/%@", [results[0] objectForKey:@"poster_path"] ];
+    }
+    NSLog(@"%@", poster_url);
+    return poster_url;
+}
 @end

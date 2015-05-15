@@ -57,11 +57,31 @@ int randNum = 0;
 }
 
 - (void)generateMovie{
-    //use movie image instead when those are included
-    self.choiceLabel.text = [[self.model getRandomMedia]capitalizedString];
+    // Remove the previously added background poster subview if there is one
+    UIImageView *view = (UIImageView *)[self.choiceLabel viewWithTag:42];
+    if(view){
+        [view removeFromSuperview];
+    }
+    // movie images used
+    NSString *media = [[self.model getRandomMedia]capitalizedString];
+    self.choiceLabel.text = media;
+    
+    NSString *poster_url_str = [self.model getPosterUrlForMedia:media];
+    NSURL *poster_url = [NSURL URLWithString:poster_url_str];
+    NSData *poster_data = [NSData dataWithContentsOfURL:poster_url];
+    UIImage *poster_img = [UIImage imageWithData:poster_data];
+    
+    UIImageView *bg = [[UIImageView alloc] initWithImage:poster_img];
+    bg.frame = CGRectMake(0, 0, 300, 400);
+    bg.tag = 42;
+    [self.choiceLabel addSubview:bg];
 }
 
 - (void)generateFood{
+    UIImageView *view = (UIImageView *)[self.choiceLabel viewWithTag:42];
+    if(view){
+        [view removeFromSuperview];
+    }
     //use movie image instead when those are included
     self.choiceLabel.text = [[self.model getRandomFood]capitalizedString];
 }
@@ -69,7 +89,7 @@ int randNum = 0;
 - (void)generateChoices {
     
     NSArray *choices = [self.model get4RandomAdjs];
-    
+    [self.model getPosterUrlForMedia:@"Rush Hour"];
     //display adjectives on buttons
     [self.adj1 setTitle: [[choices objectAtIndex:0]capitalizedString] forState:UIControlStateNormal];
     [self.adj2 setTitle: [[choices objectAtIndex:1] capitalizedString] forState:UIControlStateNormal];
